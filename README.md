@@ -10,4 +10,4 @@ A simple browser-based typing speed test built with vanilla HTML, CSS, and JavaS
 - Restart or try again at any point
 
 ## Usage
-Open `index.html` in a browser and start typing.
+Open `index.html` in a browser and start typing and enhance your speed.
