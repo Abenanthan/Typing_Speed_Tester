@@ -3,24 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Basic Website</title>
+  <title>Typing Speed Tester</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>Welcome to My Website</h1>
+    <h1>Typing Speed Tester</h1>
+    <p class="subtitle">Test how fast and accurately you can type.</p>
   </header>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
-  </nav>
+
   <main>
-    <h2>About This Site</h2>
-    <p>This is a simple basic website layout using HTML and CSS.</p>
+    <div class="controls">
+      <div class="time-select" role="group" aria-label="Select time limit">
+        <button class="time-btn active" data-time="15">15s</button>
+        <button class="time-btn" data-time="30">30s</button>
+        <button class="time-btn" data-time="60">60s</button>
+        <button class="time-btn" data-time="120">120s</button>
+      </div>
+      <button id="restart-btn" title="Restart test">&#8635; Restart</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-value" id="time-left">15</span>
+        <span class="stat-label">Seconds</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="wpm">0</span>
+        <span class="stat-label">WPM</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="accuracy">100%</span>
+        <span class="stat-label">Accuracy</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="errors">0</span>
+        <span class="stat-label">Errors</span>
+      </div>
+    </div>
+
+    <div class="text-wrapper" id="text-wrapper">
+      <p id="text-display"></p>
+      <textarea id="text-input" autofocus spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+    </div>
+
+    <div class="result" id="result" hidden>
+      <h2>Results</h2>
+      <div class="result-grid">
+        <div><span id="result-wpm">0</span><small>WPM</small></div>
+        <div><span id="result-accuracy">0%</span><small>Accuracy</small></div>
+        <div><span id="result-errors">0</span><small>Errors</small></div>
+      </div>
+      <button id="try-again-btn">Try Again</button>
+    </div>
   </main>
+
   <footer>
-    <p>&copy; 2026 My Website</p>
+    <p>&copy; 2026 Typing Speed Tester</p>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
