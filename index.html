@@ -13,84 +13,88 @@
   </header>
 
   <main>
-    <section class="setup-panel" aria-label="Test setup">
-      <div class="mode-select" id="mode-select" role="group" aria-label="Select typing mode">
-        <button class="mode-btn active" data-mode="easy" aria-pressed="true">Easy Words</button>
-        <button class="mode-btn" data-mode="normal" aria-pressed="false">Normal Text</button>
-        <button class="mode-btn" data-mode="quotes" aria-pressed="false">Quotes</button>
-        <button class="mode-btn" data-mode="custom" aria-pressed="false">Custom Text</button>
-      </div>
+    <nav class="tabs" id="mode-tabs" role="tablist" aria-label="Typing mode">
+      <button class="tab-btn" role="tab" id="tab-easy" data-mode="easy" aria-selected="false" tabindex="-1" aria-controls="mode-panel">Easy Words</button>
+      <button class="tab-btn" role="tab" id="tab-normal" data-mode="normal" aria-selected="true" tabindex="0" aria-controls="mode-panel">Normal Text</button>
+      <button class="tab-btn" role="tab" id="tab-quotes" data-mode="quotes" aria-selected="false" tabindex="-1" aria-controls="mode-panel">Quotes</button>
+      <button class="tab-btn" role="tab" id="tab-custom" data-mode="custom" aria-selected="false" tabindex="-1" aria-controls="mode-panel">Custom Text</button>
+    </nav>
 
-      <div class="time-select" id="time-select" role="group" aria-label="Select time limit">
-        <button class="time-btn active" data-time="15" aria-pressed="true">15s</button>
-        <button class="time-btn" data-time="30" aria-pressed="false">30s</button>
-        <button class="time-btn" data-time="60" aria-pressed="false">60s</button>
-        <button class="time-btn" data-time="120" aria-pressed="false">120s</button>
-      </div>
+    <section class="mode-panel" id="mode-panel" role="tabpanel" aria-labelledby="tab-normal" tabindex="0">
+      <p class="mode-description" id="mode-description">Type natural, everyday sentences pulled from a curated passage bank.</p>
 
-      <button id="restart-btn" title="Generate a new round">&#8635; New Round</button>
-    </section>
-
-    <section class="custom-panel" id="custom-panel" hidden>
-      <label for="custom-text-input">Paste or write the text you want to practice on</label>
-      <textarea id="custom-text-input" rows="4" placeholder="Type or paste your custom text here..."></textarea>
-      <button id="load-custom-btn">Use This Text</button>
-      <p class="field-hint" id="custom-hint" role="status"></p>
-    </section>
-
-    <section class="stats" aria-label="Live statistics">
-      <div class="stat">
-        <span class="stat-value" id="time-left">15</span>
-        <span class="stat-label" id="time-label">Seconds Left</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="wpm">0</span>
-        <span class="stat-label">WPM</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="accuracy">100%</span>
-        <span class="stat-label">Accuracy</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="errors">0</span>
-        <span class="stat-label">Errors</span>
-      </div>
-      <div class="stat">
-        <span class="stat-value" id="best-wpm">&ndash;</span>
-        <span class="stat-label">Best WPM</span>
-      </div>
-    </section>
-
-    <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
-
-    <section class="typing-area" aria-label="Typing area">
-      <div class="text-wrapper" id="text-wrapper">
-        <p id="text-display" aria-hidden="true"></p>
-        <p id="quote-author" class="quote-author" hidden></p>
-        <label class="sr-only" for="text-input">Typing input. Type the displayed text as accurately as you can.</label>
-        <textarea id="text-input" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="sr-status"></textarea>
-
-        <div class="idle-overlay" id="idle-overlay">
-          <button id="start-btn" class="start-btn">Start Typing Test</button>
-          <p class="hint">Press any key to jump straight in, or click Start for a countdown.</p>
+      <div class="panel-controls">
+        <div class="time-select" id="time-select" role="group" aria-label="Select time limit">
+          <button class="time-btn active" data-time="15" aria-pressed="true">15s</button>
+          <button class="time-btn" data-time="30" aria-pressed="false">30s</button>
+          <button class="time-btn" data-time="60" aria-pressed="false">60s</button>
+          <button class="time-btn" data-time="120" aria-pressed="false">120s</button>
         </div>
 
-        <div class="countdown-overlay" id="countdown-overlay" hidden aria-hidden="true">
-          <span id="countdown-number">3</span>
+        <button id="restart-btn" title="Generate a new round">&#8635; New Round</button>
+      </div>
+
+      <div class="custom-panel" id="custom-panel" hidden>
+        <label for="custom-text-input">Paste or write the text you want to practice on</label>
+        <textarea id="custom-text-input" rows="4" placeholder="Type or paste your custom text here..."></textarea>
+        <button id="load-custom-btn">Use This Text</button>
+        <p class="field-hint" id="custom-hint" role="status"></p>
+      </div>
+
+      <div class="stats" aria-label="Live statistics">
+        <div class="stat">
+          <span class="stat-value" id="time-left">15</span>
+          <span class="stat-label" id="time-label">Seconds Left</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="wpm">0</span>
+          <span class="stat-label">WPM</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="accuracy">100%</span>
+          <span class="stat-label">Accuracy</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="errors">0</span>
+          <span class="stat-label">Errors</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="best-wpm">&ndash;</span>
+          <span class="stat-label">Best WPM</span>
         </div>
       </div>
-    </section>
 
-    <section class="result" id="result" hidden aria-live="assertive">
-      <h2>Results</h2>
-      <p class="new-best-badge" id="new-best-badge" hidden>New Best!</p>
-      <div class="result-grid">
-        <div><span id="result-wpm">0</span><small>WPM</small></div>
-        <div><span id="result-accuracy">0%</span><small>Accuracy</small></div>
-        <div><span id="result-errors">0</span><small>Errors</small></div>
-        <div><span id="result-best">0</span><small>Best WPM</small></div>
+      <div id="sr-status" class="sr-only" role="status" aria-live="polite"></div>
+
+      <div class="typing-area" aria-label="Typing area">
+        <div class="text-wrapper" id="text-wrapper">
+          <p id="text-display" aria-hidden="true"></p>
+          <p id="quote-author" class="quote-author" hidden></p>
+          <label class="sr-only" for="text-input">Typing input. Type the displayed text as accurately as you can.</label>
+          <textarea id="text-input" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="sr-status"></textarea>
+
+          <div class="idle-overlay" id="idle-overlay">
+            <button id="start-btn" class="start-btn">Start Typing Test</button>
+            <p class="hint">Press any key to jump straight in, or click Start for a countdown.</p>
+          </div>
+
+          <div class="countdown-overlay" id="countdown-overlay" hidden aria-hidden="true">
+            <span id="countdown-number">3</span>
+          </div>
+        </div>
       </div>
-      <button id="try-again-btn">Try Again</button>
+
+      <div class="result" id="result" hidden aria-live="assertive">
+        <h2>Results</h2>
+        <p class="new-best-badge" id="new-best-badge" hidden>New Best!</p>
+        <div class="result-grid">
+          <div><span id="result-wpm">0</span><small>WPM</small></div>
+          <div><span id="result-accuracy">0%</span><small>Accuracy</small></div>
+          <div><span id="result-errors">0</span><small>Errors</small></div>
+          <div><span id="result-best">0</span><small>Best WPM</small></div>
+        </div>
+        <button id="try-again-btn">Try Again</button>
+      </div>
     </section>
   </main>
 

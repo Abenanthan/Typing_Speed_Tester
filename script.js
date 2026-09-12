@@ -55,8 +55,15 @@ const QUOTES = [
 
 const GameState = { IDLE: "idle", COUNTDOWN: "countdown", RUNNING: "running", FINISHED: "finished" };
 
+const MODE_DESCRIPTIONS = {
+  easy: "Warm up with short, common words — perfect for beginners.",
+  normal: "Type natural, everyday sentences pulled from a curated passage bank.",
+  quotes: "Type out a famous quote from start to finish — the round ends when you do.",
+  custom: "Paste or write your own text below, then practice typing it."
+};
+
 const state = {
-  mode: "easy",
+  mode: "normal",
   timeLimit: 15,
   gameState: GameState.IDLE,
   targetText: "",
@@ -78,7 +85,9 @@ const state = {
 /* ---------------------------------------------------------------------- */
 
 const dom = {
-  modeButtons: document.querySelectorAll(".mode-btn"),
+  tabButtons: document.querySelectorAll(".tab-btn"),
+  modePanel: document.getElementById("mode-panel"),
+  modeDescription: document.getElementById("mode-description"),
   timeSelect: document.getElementById("time-select"),
   timeButtons: document.querySelectorAll(".time-btn"),
   timeLabel: document.getElementById("time-label"),
@@ -460,14 +469,25 @@ function handleTextInput() {
   updateLiveStatsUI();
 }
 
+function playPanelTransition() {
+  dom.modePanel.classList.remove("panel-fade");
+  void dom.modePanel.offsetWidth;
+  dom.modePanel.classList.add("panel-fade");
+}
+
 function setMode(mode) {
   state.mode = mode;
-  dom.modeButtons.forEach((btn) => {
+  let activeTab = null;
+  dom.tabButtons.forEach((btn) => {
     const active = btn.dataset.mode === mode;
-    btn.classList.toggle("active", active);
-    btn.setAttribute("aria-pressed", String(active));
+    btn.setAttribute("aria-selected", String(active));
+    btn.tabIndex = active ? 0 : -1;
+    if (active) activeTab = btn;
   });
+  if (activeTab) dom.modePanel.setAttribute("aria-labelledby", activeTab.id);
+  dom.modeDescription.textContent = MODE_DESCRIPTIONS[mode] || "";
   dom.customPanel.hidden = mode !== "custom";
+  playPanelTransition();
   prepareRound();
 }
 
@@ -482,8 +502,32 @@ function setTimeLimit(time) {
 }
 
 function initEventListeners() {
-  dom.modeButtons.forEach((btn) => {
-    btn.addEventListener("click", () => setMode(btn.dataset.mode));
+  const tabList = Array.from(dom.tabButtons);
+
+  tabList.forEach((btn, index) => {
+    btn.addEventListener("click", () => {
+      btn.focus();
+      setMode(btn.dataset.mode);
+    });
+
+    btn.addEventListener("keydown", (event) => {
+      let targetIndex = null;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+        targetIndex = (index + 1) % tabList.length;
+      } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+        targetIndex = (index - 1 + tabList.length) % tabList.length;
+      } else if (event.key === "Home") {
+        targetIndex = 0;
+      } else if (event.key === "End") {
+        targetIndex = tabList.length - 1;
+      }
+      if (targetIndex !== null) {
+        event.preventDefault();
+        const targetBtn = tabList[targetIndex];
+        targetBtn.focus();
+        setMode(targetBtn.dataset.mode);
+      }
+    });
   });
 
   dom.timeButtons.forEach((btn) => {

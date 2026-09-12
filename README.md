@@ -4,6 +4,8 @@ A polished, dependency-free typing speed test built with vanilla HTML, CSS, and 
 
 ## Overview
 
+The app opens straight into the **Normal Text** mode, so a ready-to-type paragraph is the first thing you see. Above it sits a row of tabs — Easy Words, Normal Text, Quotes, and Custom Text — built as a proper [ARIA tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) widget (arrow keys/Home/End move between tabs, the active tab is marked with `aria-selected`). Selecting a tab swaps the whole practice panel below it — description, time limit, typing area, and stats all change together with a short fade transition, like moving to a new page.
+
 The app renders a passage of text and lets you type it into a hidden input while a visible overlay highlights each character as correct, incorrect, or "current" as you go. Stats (WPM, accuracy, errors, and your best score) update live and are announced to screen readers via an `aria-live` status region. When the round ends, a results panel summarizes your performance and flags a new personal best.
 
 ## Setup
@@ -17,7 +19,7 @@ python -m http.server 8000
 
 ## Features
 
-- **Four typing modes**
+- **Four typing modes, presented as tabs above the practice panel** (default: Normal Text, so you land on a paragraph immediately):
   - **Easy Words** — short, common words for beginners (timed, endless stream).
   - **Normal Text** — natural sentences pulled from a curated bank, not repeated single words (timed, endless stream).
   - **Quotes** — a random well-known quote; the round ends when you finish typing it.
@@ -40,8 +42,9 @@ python -m http.server 8000
 ## Project structure
 
 ```
-index.html   Markup: setup panel, live stats, typing area, results panel
-style.css    Theming, layout, responsive rules, focus/overlay states
+index.html   Markup: mode tabs, mode panel (description, time select, custom input,
+             live stats, typing area, results panel)
+style.css    Theming, layout, tab/panel transitions, responsive rules, focus states
 script.js    Text banks, state machine, timer, scoring, rendering, storage
 ```
 
