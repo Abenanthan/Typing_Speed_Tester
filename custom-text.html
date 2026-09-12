@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Text — Typing Speed Tester</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mode="custom">
+  <header>
+    <h1>Typing Speed Tester</h1>
+    <p class="subtitle">Test how fast and accurately you can type.</p>
+  </header>
+
+  <nav class="tabs" aria-label="Typing modes">
+    <a class="tab-btn" href="index.html">Paragraph</a>
+    <a class="tab-btn" href="easy-words.html">Easy Words</a>
+    <a class="tab-btn" href="quotes.html">Quotes</a>
+    <a class="tab-btn" href="custom-text.html" aria-current="page">Custom Text</a>
+  </nav>
+
+  <main>
+    <section class="mode-panel">
+      <p class="mode-description">Practise on your own material — paste a passage, notes, or code comments and type it back.</p>
+
+      <div class="custom-panel">
+        <label for="custom-text-input">Paste or write the text you want to practise on</label>
+        <textarea id="custom-text-input" rows="4" placeholder="Type or paste your custom text here..."></textarea>
+        <button id="load-custom-btn">Use This Text</button>
+        <p class="field-hint" id="custom-hint">Your text is saved in this browser, so it is still here next time you visit.</p>
+      </div>
+
+      <div id="practice-root"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Typing Speed Tester</p>
+    <button id="reset-scores-btn" class="link-btn">Reset high scores</button>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -4,56 +4,72 @@ A polished, dependency-free typing speed test built with vanilla HTML, CSS, and 
 
 ## Overview
 
-The app opens straight into the **Normal Text** mode, so a ready-to-type paragraph is the first thing you see. Above it sits a row of tabs — Easy Words, Normal Text, Quotes, and Custom Text — built as a proper [ARIA tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) widget (arrow keys/Home/End move between tabs, the active tab is marked with `aria-selected`). Selecting a tab swaps the whole practice panel below it — description, time limit, typing area, and stats all change together with a short fade transition, like moving to a new page.
+Opening the site drops you straight into a full paragraph of natural text — no splash screen and nothing covering the words. Just start typing; the timer begins with your first keystroke, exactly like MonkeyType.
 
-The app renders a passage of text and lets you type it into a hidden input while a visible overlay highlights each character as correct, incorrect, or "current" as you go. Stats (WPM, accuracy, errors, and your best score) update live and are announced to screen readers via an `aria-live` status region. When the round ends, a results panel summarizes your performance and flags a new personal best.
+Each mode is a **separate page with its own link**, so you can bookmark or share any one of them directly:
+
+| Page | Link | What it does |
+| --- | --- | --- |
+| Paragraph | [`index.html`](index.html) | Landing page — a full paragraph of natural writing, timed |
+| Easy Words | [`easy-words.html`](easy-words.html) | Short, common words for beginners, timed |
+| Quotes | [`quotes.html`](quotes.html) | A famous quote; ends when you finish typing it |
+| Custom Text | [`custom-text.html`](custom-text.html) | Practice on your own pasted text |
+
+The nav bar at the top of every page links to all four, with the current one highlighted via `aria-current="page"`.
+
+As you type, each character is highlighted as correct, incorrect, or "current". Stats (WPM, accuracy, errors, and your best score) update live and are announced to screen readers through an `aria-live` region. When the round ends — time out, or reaching the last character — a results panel summarizes your performance and flags a new personal best.
 
 ## Setup
 
-No build step or dependencies — just open [index.html](index.html) directly in a browser, or serve the folder with any static server, e.g.:
+No build step and no dependencies. Open [index.html](index.html) directly in a browser, or serve the folder with any static server:
 
 ```bash
 python -m http.server 8000
 # then open http://localhost:8000
 ```
 
+Because it is plain static files, it can be hosted as-is on GitHub Pages — each mode is then reachable at its own URL (`/`, `/easy-words.html`, `/quotes.html`, `/custom-text.html`).
+
 ## Features
 
-- **Four typing modes, presented as tabs above the practice panel** (default: Normal Text, so you land on a paragraph immediately):
-  - **Easy Words** — short, common words for beginners (timed, endless stream).
-  - **Normal Text** — natural sentences pulled from a curated bank, not repeated single words (timed, endless stream).
-  - **Quotes** — a random well-known quote; the round ends when you finish typing it.
-  - **Custom Text** — paste or write your own passage to practice on.
-- **Selectable time limits** of 15/30/60/120 seconds for the timed modes (hidden for Quotes/Custom, which end on completion instead).
-- **Clear game states** — idle (with a start screen and optional 3-2-1 countdown), running, and finished — so it's always obvious what state the test is in.
-- **Live stats**: WPM, accuracy, error count, and your best WPM for the current mode, all updating as you type.
-- **Persistent high scores** saved per mode in `localStorage`, with a "New Best!" badge on the results panel and a footer control to reset scores.
-- **Accessible by design**: visible focus outlines, labeled controls, keyboard shortcuts (Esc to restart), and a polite `aria-live` region that periodically announces time/WPM/accuracy plus an assertive announcement of final results.
-- **Responsive layout** that reflows controls and stat cards for phone-width screens.
-- Pasting into the typing box is disabled to keep results honest.
+- **Text visible immediately** — the whole passage is rendered on load and scrolls with your cursor as you advance; nothing overlays the words.
+- **Four modes, four pages**, each with a real URL and shared styling/logic.
+- **Selectable time limits** of 15/30/60/120 seconds on the timed pages, and the passage length scales to match the duration. Your choice is remembered across pages.
+- **Quotes and Custom Text count up instead**, ending when you type the final character.
+- **Optional 3·2·1 countdown** button for a running start — otherwise typing just begins the round.
+- **Live stats**: WPM, accuracy, error count, and your best WPM for that mode.
+- **Persistent high scores** per mode in `localStorage`, with a "New Best!" badge and a footer control to reset them. Custom text is saved too, so it is still there on your next visit.
+- **Accessible by design**: visible focus outlines, labeled controls, `Esc` to restart, a polite `aria-live` region announcing time/WPM/accuracy each second, and an assertive announcement of final results.
+- **Responsive layout** that reflows the nav, controls, and stat cards down to phone width.
+- Pasting into the typing box is disabled so results stay honest.
 
 ## How scoring works
 
-- Every keystroke is compared against the expected character at that position **the moment it's typed**, and recorded permanently as correct or incorrect — corrections don't erase history, so backspacing over a mistake and retyping it still counts the original error. This keeps accuracy meaningful even with heavy editing.
+- Every keystroke is compared against the expected character at that position **the moment it is typed**, and recorded permanently as correct or incorrect. Corrections do not erase history, so backspacing over a mistake and retyping it still counts the original error — accuracy stays meaningful even with heavy editing.
 - **Accuracy** = cumulative correct keystrokes ÷ total keystrokes recorded.
-- **Errors** = cumulative incorrect keystrokes recorded (including ones you later fixed).
-- **WPM** = (currently-correct characters in your typed text ÷ 5) ÷ minutes elapsed, using the standard "5 characters = 1 word" convention. This part uses the *current* state of your input (not history), so if you fix a mistake, your on-screen progress reflects the corrected text.
+- **Errors** = cumulative incorrect keystrokes (including ones you later fixed).
+- **WPM** = (currently-correct characters ÷ 5) ÷ minutes elapsed, using the standard "5 characters = 1 word" convention. Elapsed time comes from a wall-clock timestamp rather than timer ticks, so finishing between ticks still scores accurately. This half of the calculation reads the *current* state of your input, so fixing a mistake is reflected in your progress.
+- Rounds shorter than two seconds (or under ten characters) never claim the high score, so a one-word custom text cannot leave behind an unbeatable number.
 
 ## Project structure
 
 ```
-index.html   Markup: mode tabs, mode panel (description, time select, custom input,
-             live stats, typing area, results panel)
-style.css    Theming, layout, tab/panel transitions, responsive rules, focus states
-script.js    Text banks, state machine, timer, scoring, rendering, storage
+index.html         Paragraph mode (landing page)
+easy-words.html    Easy Words mode
+quotes.html        Quotes mode
+custom-text.html   Custom Text mode
+style.css          Theming, layout, responsive rules, focus states
+script.js          Text banks, shared practice UI, state machine, scoring, storage
 ```
 
-`script.js` is organized into clear sections: text data, state, DOM refs, high-score storage, text generation, rendering, scoring, the game state machine (idle → countdown → running → finished), and event wiring.
+Each page is a thin shell: header, nav, a mode description, and an empty `<div id="practice-root">`. `script.js` reads the mode from `<body data-mode="...">` and injects the shared practice UI (controls, stats, typing area, results) into that root, so the typing interface lives in exactly one place instead of being copy-pasted across four files.
+
+`script.js` is organized into labelled sections: text data, mode configuration, the shared UI template, state, storage, text generation, rendering, scoring, round lifecycle (idle → countdown → running → finished), event handlers, and init.
 
 ## Future enhancement ideas
 
-- Per-mode *and* per-time-limit high score tracking (currently best score is tracked per mode).
+- Per-mode *and* per-time-limit high score tracking (best score is currently tracked per mode).
 - A WPM-over-time graph rendered after each finished round.
-- Multiplayer/race mode comparing against a ghost of a previous run.
-- Language/layout options (e.g. punctuation-only mode, numbers mode, non-English word banks).
-- Exportable/shareable results (image or shareable link).
+- A race mode against a ghost replay of your previous run.
+- More text banks: punctuation and numbers drills, code snippets, other languages.
+- Exportable or shareable results.
