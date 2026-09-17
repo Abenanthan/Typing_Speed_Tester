@@ -14,10 +14,22 @@ Each mode is a **separate page with its own link**, so you can bookmark or share
 | Easy Words | [`easy-words.html`](easy-words.html) | Short, common words for beginners, timed |
 | Quotes | [`quotes.html`](quotes.html) | A famous quote; ends when you finish typing it |
 | Custom Text | [`custom-text.html`](custom-text.html) | Practice on your own pasted text |
+| Results | [`results.html`](results.html) | Graphs and a summary of your latest test |
 
-The nav bar at the top of every page links to all four, with the current one highlighted via `aria-current="page"`.
+The nav bar at the top of every page links to all of them, with the current one highlighted via `aria-current="page"`.
 
-As you type, each character is highlighted as correct, incorrect, or "current". Stats (WPM, accuracy, errors, and your best score) update live and are announced to screen readers through an `aria-live` region. When the round ends — time out, or reaching the last character — a results panel summarizes your performance and flags a new personal best.
+As you type, each character is highlighted as correct, incorrect, or "current". Stats (WPM, accuracy, errors, and your best score) update live and are announced to screen readers through an `aria-live` region. When the round ends — time out, or reaching the last character — you are taken to the results page automatically.
+
+## Results page
+
+`results.html` shows the test you just finished:
+
+- **Summary cards** — WPM, accuracy, errors, correct/typed characters, time taken, and your best WPM for that mode, with a "New Best!" badge when you set one.
+- **Speed over time** — a line chart of your WPM for each second of the test. Seconds where you made a new mistake are marked with a red ✕.
+- **Recent tests** — a bar chart of your last 10 results, with this test highlighted.
+- **Try Again** goes back to the mode you just played; **Clear history** wipes the bar chart's past results.
+
+The charts are drawn with the plain Canvas 2D API (no chart library). They redraw sharply on high-DPI screens and when the window is resized, and each canvas has an `aria-label` describing its data for screen readers. With no finished test yet, the page shows a short message and a link to start one.
 
 ## Setup
 
@@ -28,7 +40,7 @@ python -m http.server 8000
 # then open http://localhost:8000
 ```
 
-Because it is plain static files, it can be hosted as-is on GitHub Pages — each mode is then reachable at its own URL (`/`, `/easy-words.html`, `/quotes.html`, `/custom-text.html`).
+Because it is plain static files, it can be hosted as-is on GitHub Pages — each page is then reachable at its own URL (`/`, `/easy-words.html`, `/quotes.html`, `/custom-text.html`, `/results.html`).
 
 ## Features
 
@@ -38,8 +50,9 @@ Because it is plain static files, it can be hosted as-is on GitHub Pages — eac
 - **Quotes and Custom Text count up instead**, ending when you type the final character.
 - **Optional 3·2·1 countdown** button for a running start — otherwise typing just begins the round.
 - **Live stats**: WPM, accuracy, error count, and your best WPM for that mode.
+- **Results page with graphs** of your speed through the test and your recent history.
 - **Persistent high scores** per mode in `localStorage`, with a "New Best!" badge and a footer control to reset them. Custom text is saved too, so it is still there on your next visit.
-- **Accessible by design**: visible focus outlines, labeled controls, `Esc` to restart, a polite `aria-live` region announcing time/WPM/accuracy each second, and an assertive announcement of final results.
+- **Accessible by design**: visible focus outlines, labeled controls, `Esc` to restart, a polite `aria-live` region announcing time/WPM/accuracy each second, and described charts on the results page.
 - **Responsive layout** that reflows the nav, controls, and stat cards down to phone width.
 - Pasting into the typing box is disabled so results stay honest.
 
@@ -58,18 +71,22 @@ index.html         Paragraph mode (landing page)
 easy-words.html    Easy Words mode
 quotes.html        Quotes mode
 custom-text.html   Custom Text mode
+results.html       Results page with graphs
 style.css          Theming, layout, responsive rules, focus states
 script.js          Text banks, shared practice UI, state machine, scoring, storage
+results.js         Reads the saved result and draws the canvas charts
 ```
 
-Each page is a thin shell: header, nav, a mode description, and an empty `<div id="practice-root">`. `script.js` reads the mode from `<body data-mode="...">` and injects the shared practice UI (controls, stats, typing area, results) into that root, so the typing interface lives in exactly one place instead of being copy-pasted across four files.
+Each test page is a thin shell: header, nav, a mode description, and an empty `<div id="practice-root">`. `script.js` reads the mode from `<body data-mode="...">` and injects the shared practice UI (controls, stats, typing area) into that root, so the typing interface lives in exactly one place instead of being copy-pasted across four files.
+
+While a test runs, `script.js` records your WPM and error count once per second. When the test ends it saves the full result to `localStorage` (`typingTester.lastResult`), adds a short entry to the last 20 results (`typingTester.history`), and opens `results.html`, where `results.js` reads that data and draws the charts.
 
 `script.js` is organized into labelled sections: text data, mode configuration, the shared UI template, state, storage, text generation, rendering, scoring, round lifecycle (idle → countdown → running → finished), event handlers, and init.
 
 ## Future enhancement ideas
 
 - Per-mode *and* per-time-limit high score tracking (best score is currently tracked per mode).
-- A WPM-over-time graph rendered after each finished round.
+- Hover tooltips on the charts showing the exact value at each second.
 - A race mode against a ghost replay of your previous run.
 - More text banks: punctuation and numbers drills, code snippets, other languages.
 - Exportable or shareable results.

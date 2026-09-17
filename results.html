@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results — Typing Speed Tester</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="results">
+  <header>
+    <h1>Typing Speed Tester</h1>
+    <p class="subtitle">Test how fast and accurately you can type.</p>
+  </header>
+
+  <nav class="tabs" aria-label="Typing modes">
+    <a class="tab-btn" href="index.html">Paragraph</a>
+    <a class="tab-btn" href="easy-words.html">Easy Words</a>
+    <a class="tab-btn" href="quotes.html">Quotes</a>
+    <a class="tab-btn" href="custom-text.html">Custom Text</a>
+    <a class="tab-btn" href="results.html" aria-current="page">Results</a>
+  </nav>
+
+  <main>
+    <section class="mode-panel" id="empty-state" hidden>
+      <div class="empty-card">
+        <h2>No results yet</h2>
+        <p>Finish a typing test and your speed graph will appear here.</p>
+        <a class="primary-link" href="index.html">Start a test</a>
+      </div>
+    </section>
+
+    <section class="mode-panel" id="results-view" hidden>
+      <div class="results-heading">
+        <div>
+          <h2>Your Results</h2>
+          <p class="mode-description" id="result-meta"></p>
+        </div>
+        <p class="new-best-badge" id="new-best-badge" hidden>New Best!</p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card highlight">
+          <span class="summary-value" id="sum-wpm">0</span>
+          <span class="stat-label">WPM</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-value" id="sum-accuracy">0%</span>
+          <span class="stat-label">Accuracy</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-value" id="sum-errors">0</span>
+          <span class="stat-label">Errors</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-value" id="sum-chars">0/0</span>
+          <span class="stat-label">Correct / Typed</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-value" id="sum-time">0s</span>
+          <span class="stat-label">Time</span>
+        </div>
+        <div class="summary-card">
+          <span class="summary-value" id="sum-best">&ndash;</span>
+          <span class="stat-label">Best WPM</span>
+        </div>
+      </div>
+
+      <figure class="chart-card">
+        <figcaption>
+          <h3>Speed over time</h3>
+          <span class="chart-legend">
+            <span class="legend-item"><span class="swatch swatch-line"></span>WPM</span>
+            <span class="legend-item"><span class="swatch swatch-error"></span>New error</span>
+          </span>
+        </figcaption>
+        <div class="chart-box">
+          <canvas id="speed-chart" role="img" aria-label="Line chart of words per minute over time"></canvas>
+        </div>
+      </figure>
+
+      <figure class="chart-card">
+        <figcaption>
+          <h3>Recent tests</h3>
+          <span class="chart-legend">
+            <span class="legend-item"><span class="swatch swatch-bar"></span>Earlier</span>
+            <span class="legend-item"><span class="swatch swatch-line"></span>This test</span>
+          </span>
+        </figcaption>
+        <div class="chart-box">
+          <canvas id="history-chart" role="img" aria-label="Bar chart of words per minute in recent tests"></canvas>
+        </div>
+      </figure>
+
+      <div class="result-actions">
+        <a class="primary-link" id="try-again-link" href="index.html">Try Again</a>
+        <button id="clear-history-btn" class="secondary-btn">Clear history</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Typing Speed Tester</p>
+  </footer>
+
+  <script src="results.js"></script>
+</body>
+</html>

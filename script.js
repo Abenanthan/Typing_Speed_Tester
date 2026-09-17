@@ -52,6 +52,9 @@ const MODES = {
 const TIME_LIMIT_KEY = "typingTester.timeLimit";
 const CUSTOM_TEXT_KEY = "typingTester.customText";
 const HIGH_SCORE_KEY = "typingTester.highScores";
+const LAST_RESULT_KEY = "typingTester.lastResult";
+const HISTORY_KEY = "typingTester.history";
+const HISTORY_LIMIT = 20;
 
 /* ---------------------------------------------------------------------- */
 /* Practice UI markup (shared by every page)                              */
@@ -113,18 +116,6 @@ const PRACTICE_TEMPLATE = `
       <span class="focus-note">Click the text above to focus it, then start typing.</span>
     </p>
   </div>
-
-  <div class="result" id="result" hidden aria-live="assertive">
-    <h2>Results</h2>
-    <p class="new-best-badge" id="new-best-badge" hidden>New Best!</p>
-    <div class="result-grid">
-      <div><span id="result-wpm">0</span><small>WPM</small></div>
-      <div><span id="result-accuracy">0%</span><small>Accuracy</small></div>
-      <div><span id="result-errors">0</span><small>Errors</small></div>
-      <div><span id="result-best">0</span><small>Best WPM</small></div>
-    </div>
-    <button id="try-again-btn">Try Again</button>
-  </div>
 `;
 
 /* ---------------------------------------------------------------------- */
@@ -147,7 +138,8 @@ const state = {
   countdownId: null,
   charStatus: [],
   cumulativeCorrect: 0,
-  cumulativeIncorrect: 0
+  cumulativeIncorrect: 0,
+  samples: []
 };
 
 let previousInputValue = "";
@@ -398,6 +390,7 @@ function prepareRound() {
   state.cumulativeCorrect = 0;
   state.cumulativeIncorrect = 0;
   state.charStatus = [];
+  state.samples = [];
 
   const round = buildRoundText();
   state.targetText = round.text;
@@ -406,7 +399,6 @@ function prepareRound() {
   previousInputValue = "";
   dom.textInput.value = "";
   dom.textWrapper.classList.remove("disabled");
-  dom.resultEl.hidden = true;
   dom.countdownOverlay.hidden = true;
 
   renderTargetText();
@@ -438,6 +430,7 @@ function beginRun() {
       state.elapsed++;
     }
     updateLiveStatsUI();
+    recordSample();
     const { wpm, accuracy } = computeLiveStats();
     const clock = state.countDirection === "down"
       ? state.timeLeft + " seconds left"
@@ -468,6 +461,26 @@ function runCountdown() {
   }, 700);
 }
 
+function recordSample() {
+  const second = Math.round(elapsedSeconds());
+  const last = state.samples[state.samples.length - 1];
+  if (second < 1 || (last && last.second === second)) return;
+  const { wpm, errors } = computeLiveStats();
+  state.samples.push({ second, wpm, errors });
+}
+
+function saveRoundResult(result) {
+  writeStored(LAST_RESULT_KEY, JSON.stringify(result));
+  let history = [];
+  try {
+    history = JSON.parse(readStored(HISTORY_KEY)) || [];
+  } catch (err) {
+    history = [];
+  }
+  history.push({ date: result.date, mode: result.mode, wpm: result.wpm, accuracy: result.accuracy });
+  writeStored(HISTORY_KEY, JSON.stringify(history.slice(-HISTORY_LIMIT)));
+}
+
 function endRound() {
   state.gameState = GameState.FINISHED;
   clearInterval(state.timerId);
@@ -475,27 +488,33 @@ function endRound() {
   dom.textWrapper.classList.add("disabled");
   dom.textInput.blur();
 
+  recordSample();
   const { wpm, accuracy, errors } = computeLiveStats();
+  const duration = Math.round(elapsedSeconds() * 10) / 10;
   /* Very short rounds (a one-word custom text, say) can't produce a
      meaningful rate, so they never claim the high score. */
   const scoreCounts = elapsedSeconds() >= 2 && state.charStatus.length >= 10;
-  const isBest = scoreCounts && saveHighScoreIfBetter(state.mode, {
-    wpm,
-    accuracy,
-    date: new Date().toISOString()
-  });
+  const date = new Date().toISOString();
+  const isBest = scoreCounts && saveHighScoreIfBetter(state.mode, { wpm, accuracy, date });
   const best = getHighScore(state.mode);
 
-  dom.resultWpmEl.textContent = wpm;
-  dom.resultAccuracyEl.textContent = accuracy + "%";
-  dom.resultErrorsEl.textContent = errors;
-  dom.resultBestEl.textContent = best ? best.wpm : wpm;
-  dom.newBestBadge.hidden = !isBest;
-  dom.resultEl.hidden = false;
-  updateBestScoreUI();
+  saveRoundResult({
+    date,
+    mode: state.mode,
+    timeLimit: MODES[state.mode].timed ? state.timeLimit : null,
+    wpm,
+    accuracy,
+    errors,
+    correctChars: state.charStatus.filter((s) => s === "correct").length,
+    typedChars: state.charStatus.length,
+    duration,
+    isBest,
+    best: best ? best.wpm : null,
+    samples: state.samples
+  });
 
-  announceStatus(`Test finished. ${wpm} words per minute, ${accuracy}% accuracy, ${errors} errors.`
-    + (isBest ? " New best score!" : ""));
+  announceStatus(`Test finished. ${wpm} words per minute, ${accuracy}% accuracy. Opening your results.`);
+  window.location.href = "results.html";
 }
 
 /* ---------------------------------------------------------------------- */
@@ -574,10 +593,6 @@ function initEventListeners() {
     prepareRound();
     dom.textInput.focus();
   });
-  dom.tryAgainBtn.addEventListener("click", () => {
-    prepareRound();
-    dom.textInput.focus();
-  });
 
   const resetBtn = document.getElementById("reset-scores-btn");
   if (resetBtn) {
@@ -619,14 +634,6 @@ function cacheDom() {
   dom.textInput = document.getElementById("text-input");
   dom.countdownOverlay = document.getElementById("countdown-overlay");
   dom.countdownNumber = document.getElementById("countdown-number");
-
-  dom.resultEl = document.getElementById("result");
-  dom.newBestBadge = document.getElementById("new-best-badge");
-  dom.resultWpmEl = document.getElementById("result-wpm");
-  dom.resultAccuracyEl = document.getElementById("result-accuracy");
-  dom.resultErrorsEl = document.getElementById("result-errors");
-  dom.resultBestEl = document.getElementById("result-best");
-  dom.tryAgainBtn = document.getElementById("try-again-btn");
 }
 
 function init() {
