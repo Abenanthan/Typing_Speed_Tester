@@ -200,6 +200,9 @@ header h1 {
   gap: var(--space-1);
   margin-bottom: var(--space-2);
   flex-wrap: wrap;
+  /* Fixed height so the rows below stay put on pages that hide the
+     time buttons (Quotes and Custom Text). */
+  min-height: 46px;
 }
 
 .time-select {
@@ -404,6 +407,9 @@ header h1 {
   /* Untyped text stays readable (contrast above 4.5:1), typed text turns brighter. */
   color: var(--muted);
   user-select: none;
+  /* Reserve about three lines so a short quote and a long paragraph
+     give the box the same height and nothing jumps between pages. */
+  min-height: 7.8rem;
   max-height: 12rem;
   overflow-y: auto;
   scrollbar-width: thin;

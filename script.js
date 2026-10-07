@@ -241,7 +241,7 @@ function buildRoundText() {
   }
   const stored = (readStored(CUSTOM_TEXT_KEY) || "").trim().replace(/\s+/g, " ");
   return {
-    text: stored || "Add your own text in the box above, then press Use This Text to start practising it.",
+    text: stored || "Add your own text in the box below, then press Use This Text to start practising it.",
     author: null
   };
 }
@@ -573,7 +573,7 @@ function initCustomTextPanel() {
       return;
     }
     writeStored(CUSTOM_TEXT_KEY, value);
-    hint.textContent = "Custom text loaded. Click the text below and start typing.";
+    hint.textContent = "Custom text loaded. Start typing in the box above.";
     prepareRound();
     dom.textInput.focus();
   });
