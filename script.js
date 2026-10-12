@@ -52,11 +52,11 @@ const MODES = {
   custom: { timed: false, countDirection: "up" }
 };
 
-const TIME_LIMIT_KEY = "typingTester.timeLimit";
-const CUSTOM_TEXT_KEY = "typingTester.customText";
-const HIGH_SCORE_KEY = "typingTester.highScores";
-const LAST_RESULT_KEY = "typingTester.lastResult";
-const HISTORY_KEY = "typingTester.history";
+const TIME_LIMIT_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("timeLimit") : "";
+const CUSTOM_TEXT_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("customText") : "";
+const HIGH_SCORE_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("highScores") : "";
+const LAST_RESULT_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("lastResult") : "";
+const HISTORY_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("history") : "";
 const HISTORY_LIMIT = 20;
 
 /* ---------------------------------------------------------------------- */
@@ -640,6 +640,7 @@ function cacheDom() {
 }
 
 function init() {
+  if (!TypingAuth.currentUser()) return;
   const root = document.getElementById("practice-root");
   if (!root) return;
 

@@ -1,7 +1,7 @@
 "use strict";
 
-const LAST_RESULT_KEY = "typingTester.lastResult";
-const HISTORY_KEY = "typingTester.history";
+const LAST_RESULT_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("lastResult") : "";
+const HISTORY_KEY = TypingAuth.currentUser() ? TypingAuth.storageKey("history") : "";
 
 const MODE_PAGES = {
   normal: { label: "Paragraph", page: "index.html" },
@@ -225,6 +225,7 @@ function renderSummary(result) {
 }
 
 function init() {
+  if (!TypingAuth.currentUser()) return;
   const result = readJson(LAST_RESULT_KEY, null);
   const emptyState = document.getElementById("empty-state");
   const view = document.getElementById("results-view");

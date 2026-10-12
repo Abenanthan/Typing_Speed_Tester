@@ -92,6 +92,7 @@ h1, h2, h3 {
 
 a:focus-visible,
 button:focus-visible,
+input:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
   outline: 3px solid var(--focus-ring);
@@ -135,6 +136,33 @@ header h1 {
   color: var(--muted);
   font-size: 0.95rem;
 }
+
+/* Keep protected pages out of view until the local session is checked. */
+body:not(.auth-ready):not(.login-page) > * {
+  visibility: hidden;
+}
+
+.account-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.account-signout {
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.account-signout:hover { color: var(--text); }
 
 /* Navigation is a row of pills so the current page is obvious. */
 .tabs {
@@ -730,6 +758,122 @@ footer p {
 }
 
 /* ---------- 10. Responsive + reduced motion --------------------------- */
+
+/* ---------- Login ------------------------------------------------------ */
+
+.login-page { justify-content: center; }
+.login-page header { margin-bottom: var(--space-4); }
+.login-layout {
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 410px);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+.login-eyebrow {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  margin: 0 0 1.1rem;
+}
+.login-intro h2 {
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  margin: 0 0 1.3rem;
+}
+.login-intro h2 span { color: var(--accent); }
+.login-intro > p:not(.login-eyebrow) {
+  color: var(--muted);
+  max-width: 42ch;
+  margin: 0;
+}
+.login-preview {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  letter-spacing: 0.015em;
+}
+.preview-cursor {
+  width: 2px;
+  height: 1.15em;
+  background: var(--accent);
+  animation: preview-caret 1s steps(1) infinite;
+}
+@keyframes preview-caret { 50% { opacity: 0; } }
+.login-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  box-shadow: var(--shadow);
+}
+.login-switch {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  background: var(--bg);
+  margin-bottom: 1.7rem;
+}
+.login-switch button {
+  flex: 1;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 0.6rem;
+  min-height: 40px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 0.88rem var(--font-body);
+  cursor: pointer;
+}
+.login-switch button.active { color: var(--on-accent); background: var(--accent); }
+.login-card h2 { font-size: 1.55rem; margin: 0 0 0.25rem; }
+.login-support { color: var(--muted); margin: 0 0 1.5rem; }
+.login-card form { display: flex; flex-direction: column; }
+.login-card label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+.login-card input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.login-card input:focus { border-color: var(--accent); }
+.login-card .field-hint { min-height: 0; margin: 0.35rem 0 1rem; }
+.login-card #password, .login-card #confirm-password { margin-bottom: 0.6rem; }
+.login-card #confirm-wrap:not([hidden]) { display: flex; flex-direction: column; }
+.form-message { color: var(--error); min-height: 1.5rem; margin: 0 0 0.6rem; font-size: 0.88rem; }
+.login-submit {
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 600 0.95rem var(--font-body);
+  cursor: pointer;
+}
+.login-submit:hover { background: var(--accent-strong); }
+.login-submit:disabled { opacity: 0.6; cursor: wait; }
+.login-local-note { color: var(--muted); font-size: 0.8rem; margin: 1.3rem 0 0; line-height: 1.45; }
+
+@media (max-width: 720px) {
+  .login-layout { grid-template-columns: 1fr; max-width: 480px; gap: 2rem; }
+  .login-intro { text-align: center; }
+  .login-intro > p:not(.login-eyebrow) { margin: 0 auto; }
+  .login-preview { margin-top: 1.25rem; }
+}
 
 @media (max-width: 720px) {
   .summary-grid {

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — Typing Speed Tester</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="login" class="login-page">
+  <header>
+    <div class="brand"><h1>Typing Speed Tester</h1></div>
+    <p class="subtitle">Test how fast and accurately you can type.</p>
+  </header>
+
+  <main class="login-layout">
+    <section class="login-intro" aria-labelledby="intro-title">
+      <p class="login-eyebrow">YOUR PRACTICE SPACE</p>
+      <h2 id="intro-title">Find your rhythm.<br><span>Keep your progress.</span></h2>
+      <p>Sign in to practise with paragraphs, easy words, quotes, or your own text. Your results and personal best stay with your account in this browser.</p>
+      <div class="login-preview" aria-hidden="true">
+        <span class="preview-cursor"></span><span>every keystroke counts</span>
+      </div>
+    </section>
+
+    <section class="login-card" aria-labelledby="form-title">
+      <div class="login-switch" role="group" aria-label="Account action">
+        <button type="button" id="sign-in-tab" class="active" aria-pressed="true">Sign in</button>
+        <button type="button" id="create-tab" aria-pressed="false">Create account</button>
+      </div>
+      <h2 id="form-title">Welcome back</h2>
+      <p class="login-support" id="form-support">Pick up where you left off.</p>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" required spellcheck="false" aria-describedby="username-hint">
+        <p id="username-hint" class="field-hint">3–24 letters, numbers, or underscores.</p>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" required>
+        <div id="confirm-wrap" hidden>
+          <label for="confirm-password">Confirm password</label>
+          <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="8">
+        </div>
+        <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+        <button id="submit-account" class="login-submit" type="submit">Sign in</button>
+      </form>
+      <p class="login-local-note">Accounts are saved only in this browser. Use a password you do not use elsewhere.</p>
+    </section>
+  </main>
+
+  <footer><p>&copy; 2026 Typing Speed Tester</p></footer>
+  <script src="auth.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
